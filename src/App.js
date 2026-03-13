@@ -1,13 +1,39 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Calendar from './components/Calendar';
-import initialProgress from './progress.json';
 import html2canvas from 'html2canvas';
 import './styles.css';
 
 function App() {
-  const [progress, setProgress] = useState(initialProgress || {});
+  const [progress, setProgress] = useState({});
   const [isExporting, setIsExporting] = useState(false);
   const calendarRef = useRef(null);
+
+  useEffect(() => {
+    fetch('http://localhost:3001/progress')
+      .then(res => res.json())
+      .then(data => {
+        if (data && data.days) {
+          setProgress(data.days);
+        } else {
+          setProgress(data || {});
+        }
+      })
+      .catch(err => console.error('Failed to load progress', err));
+  }, []);
+
+  const saveProgressToDb = async (newProgress) => {
+    try {
+      await fetch('http://localhost:3001/progress', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ days: newProgress }),
+      });
+    } catch (err) {
+      console.error('Failed to save progress to db', err);
+    }
+  };
 
   const year = 2026;
   
@@ -23,13 +49,16 @@ function App() {
       } else {
         newProg[dateStr] = 'completed';
       }
+      saveProgressToDb(newProg);
       return newProg;
     });
   };
 
   const markTodayComplete = () => {
     setProgress(prev => {
-      return { ...prev, [todayStr]: 'completed' };
+      const newProg = { ...prev, [todayStr]: 'completed' };
+      saveProgressToDb(newProg);
+      return newProg;
     });
   };
 
@@ -37,6 +66,7 @@ function App() {
     setProgress(prev => {
       const newProg = { ...prev };
       delete newProg[todayStr];
+      saveProgressToDb(newProg);
       return newProg;
     });
   };
@@ -115,35 +145,7 @@ function App() {
     }, 150);
   };
 
-  const exportJSON = () => {
-    const jsonStr = JSON.stringify(progress, null, 2);
-    const blob = new Blob([jsonStr], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `progress-${year}.json`;
-    link.click();
-    
-    URL.revokeObjectURL(url);
-  };
 
-  const importJSON = (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      try {
-        const parsed = JSON.parse(event.target.result);
-        setProgress(parsed);
-      } catch (err) {
-        alert('Invalid JSON file');
-      }
-    };
-    reader.readAsText(file);
-    e.target.value = null;
-  };
 
   return (
     <div className="app-container">
@@ -152,16 +154,6 @@ function App() {
           <button onClick={markTodayComplete}>Mark Today Complete</button>
           <button onClick={resetToday}>Reset Today</button>
           <button onClick={exportWallpaper}>Export Wallpaper</button>
-          <button onClick={exportJSON}>Export JSON</button>
-          <label className="button">
-            Import JSON
-            <input 
-              type="file" 
-              accept=".json" 
-              onChange={importJSON} 
-              style={{ display: 'none' }} 
-            />
-          </label>
         </div>
       )}
       
