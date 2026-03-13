@@ -2,6 +2,12 @@
 
 A minimalist, aesthetically pleasing 12-month habit tracker built with React. Track your daily habits over an entire year with an Apple-style interface, smooth animations, and a gorgeous dark mode design.
 
+### App Preview
+![App UI Preview](assets/app_screenshot.png)
+
+### Wallpaper Export Preview
+![Wallpaper Preview](assets/wallpaper_preview.png)
+
 ## Features
 
 - **12-Month Calendar View**: A clear, bird's-eye view of your year with a 4x3 grid layout.
