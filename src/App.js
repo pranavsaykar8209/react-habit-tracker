@@ -35,7 +35,7 @@ function App() {
     }
   };
 
-  const year = 2026;
+  const [year, setYear] = useState(new Date().getFullYear());
   
   // Calculate today based on current system time
   const today = new Date();
@@ -151,7 +151,7 @@ function App() {
         elem.style.paddingTop = '';
         
         const dataUrl = canvas.toDataURL('image/png', 1.0);
-        downloadImageHelper(dataUrl, "habit_calendar");
+        downloadImageHelper(dataUrl, `habit_calendar_${year}`);
         
       } catch (err) {
         console.error('Failed to export wallpaper', err);
@@ -167,9 +167,11 @@ function App() {
     <div className="app-container">
       {!isExporting && (
         <div className="controls">
+          <button onClick={() => setYear(year - 1)}>Previous Year</button>
           <button onClick={markTodayComplete}>Mark Today Complete</button>
           <button onClick={resetToday}>Reset Today</button>
           <button onClick={exportWallpaper}>Export Wallpaper</button>
+          <button onClick={() => setYear(year + 1)}>Next Year</button>
         </div>
       )}
       
