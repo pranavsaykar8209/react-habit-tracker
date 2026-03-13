@@ -42,6 +42,22 @@ function App() {
   const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
   
   const handleToggleClick = (dateStr, currentStatus) => {
+    const clickedDate = new Date(dateStr);
+    const todayDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    
+    const diffTime = todayDate.getTime() - clickedDate.getTime();
+    const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
+
+    if (diffDays < 0) {
+      alert("You cannot update future days!");
+      return;
+    }
+    
+    if (diffDays > 7) {
+      alert("You can only update data for today and the last 7 days!");
+      return;
+    }
+
     setProgress(prev => {
       const newProg = { ...prev };
       if (currentStatus === 'completed') {
