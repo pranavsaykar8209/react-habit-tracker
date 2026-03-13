@@ -1,0 +1,162 @@
+body, html {
+  margin: 0;
+  padding: 0;
+  background-color: #000000;
+  color: #ffffff;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  height: 100%;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+  /* Instead of centered strictly on Y, a bit of top padding so buttons fit well */
+  padding-top: 40px; 
+}
+
+/* Controls */
+.controls {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 60px;
+  flex-wrap: wrap;
+  justify-content: center;
+  z-index: 10;
+}
+
+button, .button {
+  background: #1c1c1e;
+  color: #fff;
+  border: 1px solid #333;
+  padding: 12px 20px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  font-family: inherit;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+button:hover, .button:hover {
+  background: #2c2c2e;
+  border-color: #555;
+  transform: translateY(-2px);
+}
+
+button:active, .button:active {
+  transform: translateY(0);
+}
+
+/* Wallpaper Container */
+.wallpaper-canvas {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 40px;
+  background-color: #000000;
+  flex-grow: 1;
+  font-size: 16px; /* Base size */
+}
+
+/* Calendar Layout */
+.calendar-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(3, auto);
+  gap: 4em 5em; /* Spacing between months */
+}
+
+/* Month Grid */
+.month-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.8em; /* Spacing between dots */
+}
+
+/* Dots */
+.dot {
+  width: 1em;
+  height: 1em;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background-color: #3A3A3A;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  position: relative;
+}
+
+.dot.placeholder {
+  visibility: hidden;
+}
+
+.dot.completed {
+  background-color: #22C55E;
+  box-shadow: 0 0 0.8em rgba(34, 197, 94, 0.6);
+  border: none;
+}
+
+.dot.missed {
+  background-color: #EF4444;
+  box-shadow: 0 0 0.8em rgba(239, 68, 68, 0.6);
+  border: none;
+}
+
+.dot.future {
+  background-color: #3A3A3A;
+}
+
+/* Custom Tooltip */
+.dot:not(.placeholder)::after {
+  content: attr(data-day);
+  position: absolute;
+  top: -25px;
+  left: 50%;
+  transform: translateX(-50%) scale(0.8);
+  background: rgba(255, 255, 255, 0.95);
+  color: #000;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+  z-index: 10;
+}
+
+/* Subtle Hover Animation */
+.dot:not(.placeholder):hover {
+  transform: scale(1.3);
+  filter: brightness(1.2);
+  z-index: 2;
+  position: relative;
+}
+
+.dot:not(.placeholder):hover::after {
+  opacity: 1;
+  /* Since dot scales by 1.3 on hover, we scale down the tooltip to keep it proportional (approx 1/1.3=0.77) */
+  transform: translateX(-50%) scale(0.77);
+  top: -20px;
+}
